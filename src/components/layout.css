@@ -1,6 +1,6 @@
 @font-face {
   font-family: "Engcomica";
-  src: url("/fonts/Engcomica.otf") format("truetype"); /* ou woff/woff2 */
+  src: url("/space-crime-website/fonts/Engcomica.otf") format("truetype"); /* ou woff/woff2 */
   font-weight: normal;
   font-style: normal;
 }
@@ -337,6 +337,10 @@ pre tt:after {
   justify-content: space-evenly;
   flex-wrap: wrap;
 }
+.top {
+  display: flex;
+  justify-content: space-evenly;
+}
 
 .card {
   width: 200px;
@@ -345,38 +349,34 @@ pre tt:after {
   flex-direction: column;
   justify-content: center;
 
-  .top {
-    display: flex;
-    justify-content: space-evenly;
-  }
+}
 
-  .caseType {
-    font-family: Engcomica, sans-serif;
-    font-size: 2rem;
-    font-weight: 200;
-    text-align: center;
-    line-height: normal;
-  }
+.caseType {
+  font-family: Engcomica, Inter, -apple-system, sans-serif;
+  font-size: 2rem;
+  font-weight: 200;
+  text-align: center;
+  line-height: normal;
+}
 
-  .caseTypeDescription {
-    padding: 12px;
-  }
+.caseTypeDescription {
+  padding: 12px;
+}
 
-  .number {
-    font-family: Engcomica, sans-serif;
-    font-size: 5rem;
-    color: #fff;
-    font-weight: 700;
-  }
+.number {
+  font-family: Engcomica, Inter, -apple-system, sans-serif;
+  font-size: 5rem;
+  color: #fff;
+  font-weight: 700;
+}
 
-  .label {
-    color: #fff;
-    font-size: 1.3rem;
-    font-weight: bold;
-    opacity: 0.9;
-    display: flex;
-    justify-content: center;
-  }
+.label {
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: bold;
+  opacity: 0.9;
+  display: flex;
+  justify-content: center;
 }
 
 
