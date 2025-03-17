@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkspace_crime_website=self.webpackChunkspace_crime_website||[]).push([[883],{429:function(e,t,n){n.r(t),n.d(t,{Head:function(){return c}});var s=n(7294),u=n(5592),a=n(9357);const c=()=>s.createElement(a.Z,{title:"404: Not Found"});t.default=()=>s.createElement(u.Z,null,s.createElement("h1",null,"404: Not Found"),s.createElement("p",null,"You just hit a route that doesn't exist... the sadness."))}}]);
+//# sourceMappingURL=component---src-pages-404-js-2f4fa33bb6ec9f8dd4db.js.map

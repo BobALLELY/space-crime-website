@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkspace_crime_website=self.webpackChunkspace_crime_website||[]).push([[617],{4948:function(e,t,c){c.r(t),c.d(t,{Head:function(){return o}});var n=c(7294),a=c(1883),l=c(5592),r=c(9357);const o=()=>n.createElement(r.Z,{title:"Page two"});t.default=()=>n.createElement(l.Z,null,n.createElement("h1",null,"Hi from the second page"),n.createElement("p",null,"Welcome to page 2"),n.createElement(a.Link,{to:"/"},"Go back to the homepage"))}}]);
+//# sourceMappingURL=component---src-pages-page-2-js-85388eb5fee28c208e55.js.map
