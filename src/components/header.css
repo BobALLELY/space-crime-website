@@ -1,8 +1,9 @@
 .logos {
   margin: 20px;
   display: flex;
+  flex-direction: column;
 }
 
 .logo {
-  margin: 10px;
+  /* margin: 10px; */
 }

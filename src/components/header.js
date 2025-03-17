@@ -10,6 +10,8 @@ const Header = ({ siteTitle }) => (
       padding: `var(--space-4) var(--size-gutter)`,
       display: 'flex',
       justifyContent: 'space-between',
+      position: 'fixed',
+      width: '100%'
     }}
   >
     <div>

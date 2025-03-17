@@ -92,7 +92,7 @@ h1 > b {
 h2 {
   color: #fff;
   font-family: Engcomica, sans-serif;
-  font-size: 3rem;
+  font-size: 2rem;
   /* -webkit-text-stroke: 1px black; */
   line-height: 1;
   letter-spacing: 0.15rem;
@@ -150,7 +150,9 @@ dd,
 p {
   margin: 0;
   padding: 0;
-  margin-bottom: var(--space-4);
+  margin: 20px;
+  color: #fff;
+  font-size: 1.2rem;
 }
 ul,
 ol {
@@ -203,7 +205,7 @@ li > p {
   margin-bottom: calc(var(--space-4) / 2);
 }
 p {
-  max-width: 680px;
+  /* max-width: 680px; */
 }
 code {
   font-size: 0.875rem;
@@ -249,23 +251,46 @@ pre tt:after {
   content: none;
 }
 
-.image-border {
-  border-top: 3px solid #ffffff;
-  border-bottom: 3px solid #ffffff;
-  background-color: #161616;
+.yellow {
+  color: #F7BB0D;
 }
-.image-list {
-  display: flex;
-  justify-content: center; /* Centre les images horizontalement */
-  gap: 20px; /* Espacement entre les images */
-  flex-direction: row; /* Aligne en colonne sur mobile */
+
+.white {
+  color: #ffffff;
 }
-/* Mode colonne pour mobile */
-@media (max-width: 768px) { 
-  .image-list {
-      flex-direction: column; /* Aligne en colonne sur mobile */
-      align-items: center; /* Centre les images en colonne */
-  }
+
+.grey {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.classic {
+  color: #84F985;
+}
+
+.charlie {
+  color: #52CBFF;
+}
+
+.mission {
+  color: #FDB583;
+}
+
+.wanted {
+  color: #FD3351;
+}
+
+.treasure {
+  color: #FD3351;
+}
+
+.content {
+  min-height: 100vh;
+  justify-items: center;
+  width: 720px
+}
+
+.fullSize {
+  width: 720px
 }
 
 .badges {
@@ -292,13 +317,74 @@ pre tt:after {
 }
 
 .background {
-  background-color: #000000bd;
-  padding: 20px;
-  border-radius: 15px;
+  border-radius: 5px;
+  background-color: #000000;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 4px 24px;
+  border: 3px solid #686868;
+  margin: 20px;
+  width: 680px;
 }
 
 .intro {
   max-width: none;
   line-height: var(--line-height-loose);
   color: #ffffff;
+  height: 70vh;
+}
+
+.cards {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+.card {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .top {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .caseType {
+    font-family: Engcomica, sans-serif;
+    font-size: 2rem;
+    font-weight: 200;
+    text-align: center;
+    line-height: normal;
+  }
+
+  .caseTypeDescription {
+    padding: 12px;
+  }
+
+  .number {
+    font-family: Engcomica, sans-serif;
+    font-size: 5rem;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .label {
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: bold;
+    opacity: 0.9;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+
+
+
+/* Mode colonne pour mobile */
+@media (max-width: 768px) { 
+  .background {
+    /* width: auto; */
+  }
 }

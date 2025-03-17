@@ -23,9 +23,10 @@ const Layout = ({ children }) => {
         style={{
           margin: `0 auto`,
           maxWidth: `var(--size-content)`,
+          justifyItems: `center`
         }}
       >
-        <main>{children}</main>
+        <main class="content">{children}</main>
         <footer
           style={{
             marginTop: `var(--space-5)`,
