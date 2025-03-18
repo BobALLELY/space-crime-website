@@ -10,9 +10,9 @@ const Header = ({ siteTitle }) => (
       padding: `var(--space-4) var(--size-gutter)`,
       display: 'flex',
       justifyContent: 'space-between',
-      position: 'fixed',
       width: '100%'
     }}
+    className="header"
   >
     <div>
       <StaticImage
@@ -31,7 +31,7 @@ const Header = ({ siteTitle }) => (
         <StaticImage
             src="../images/android.png"
             loading="eager"
-            width={150}
+            width={170}
             quality={95}
             formats={["auto", "webp", "avif"]}
             alt=""
@@ -42,7 +42,7 @@ const Header = ({ siteTitle }) => (
         <StaticImage
             src="../images/ios.png"
             loading="eager"
-            width={150}
+            width={170}
             quality={95}
             formats={["auto", "webp", "avif"]}
             alt=""

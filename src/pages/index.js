@@ -3,7 +3,6 @@ import { StaticImage } from "gatsby-plugin-image"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
-import * as styles from "../components/index.module.css"
 
 const IndexPage = () => (
   <Layout>
@@ -19,7 +18,6 @@ const IndexPage = () => (
             quality={95}
             formats={["auto", "webp", "avif"]}
             alt=""
-            style={{ marginBottom: `var(--space-3)` }}
           />
         </div>
         <span class="label">Modes de jeu</span>
@@ -34,7 +32,6 @@ const IndexPage = () => (
             quality={95}
             formats={["auto", "webp", "avif"]}
             alt=""
-            style={{ marginBottom: `var(--space-3)` }}
           />
         </div>
         <span class="label">Crimes</span>
@@ -49,7 +46,6 @@ const IndexPage = () => (
             quality={95}
             formats={["auto", "webp", "avif"]}
             alt=""
-            style={{ marginBottom: `var(--space-3)` }}
           />
         </div>
         <span class="label">Invasions d'aliens</span>
@@ -64,7 +60,6 @@ const IndexPage = () => (
             quality={95}
             formats={["auto", "webp", "avif"]}
             alt=""
-            style={{ marginBottom: `var(--space-3)` }}
           />
         </div>
         <span class="label">Modes de jeu</span>
@@ -79,7 +74,6 @@ const IndexPage = () => (
             quality={95}
             formats={["auto", "webp", "avif"]}
             alt=""
-            style={{ marginBottom: `var(--space-3)` }}
           />
         </div>
         <span class="label">Crimes</span>
@@ -94,21 +88,24 @@ const IndexPage = () => (
             quality={95}
             formats={["auto", "webp", "avif"]}
             alt=""
-            style={{ marginBottom: `var(--space-3)` }}
           />
         </div>
         <span class="label">Invasions d'aliens</span>
       </div>
     </div>
 
-    <div class="background">
+    <div class="separator"></div>
+
+    <div class="background fullText">
       <p class="grey">
         Bienvenue à <b class="white">Space Crime</b> ! <br /> <br />
         Plongez au cœur d’une station spatiale où le crime règne en maître. Entre complots mystérieux, vols à la tire et assassinats de sang-froid, chaque recoin cache un secret… <br />
         Face à cette vague criminelle, la police intergalactique est dépassée.<br /> <br />
-        <b class="white">Enquêtez</b>, <b class="white">analysez</b> les indices et <b class="white">démasquez</b> les coupables grâce à vos talents d’observation et de déduction ! <br />
+        <b class="white">Enquêtez</b>, <b class="white">analysez</b> et <b class="white">résolvez</b> les enquêtes grâce à vos talents d’observation et de déduction ! <br />
       </p>
     </div>
+
+    <div class="separator"></div>
 
     <div class="cards">
       <div class="background card">
@@ -121,7 +118,6 @@ const IndexPage = () => (
             quality={95}
             formats={["auto", "webp", "avif"]}
             alt=""
-            style={{ marginBottom: `var(--space-3)` }}
           />
         </div>
         <span class="label">Modes de jeu</span>
@@ -144,7 +140,7 @@ const IndexPage = () => (
       </div>
       <div class="background card">
         <div class="caseType treasure">Chasse au trésor</div>
-        <span class="caseTypeDescription white">Analysez les indices et récupérer les trésors cachés.</span>
+        <span class="caseTypeDescription white">Analysez les indices et récupérez les trésors cachés.</span>
       </div>
     </div>
   </Layout>

@@ -286,11 +286,7 @@ pre tt:after {
 .content {
   min-height: 100vh;
   justify-items: center;
-  width: 720px
-}
-
-.fullSize {
-  width: 720px
+  width: 720px;
 }
 
 .badges {
@@ -340,6 +336,7 @@ pre tt:after {
 .top {
   display: flex;
   justify-content: space-evenly;
+  margin-bottom: var(--space-3);
 }
 
 .card {
@@ -348,7 +345,6 @@ pre tt:after {
   display: flex;
   flex-direction: column;
   justify-content: center;
-
 }
 
 .caseType {
@@ -380,11 +376,61 @@ pre tt:after {
 }
 
 
-
-
 /* Mode colonne pour mobile */
 @media (max-width: 768px) { 
-  .background {
-    /* width: auto; */
+  .header {
+    position: relative;
+    flex-direction: column;
   }
+
+  .intro {
+    height: 40vh;
+  }
+
+  .content {
+    width: 100%;
+  }
+
+  .fullText {
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+  }
+
+  .separator {
+    height: 30px;
+    width: 100%;
+  }
+
+  .background {
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-top: 30px;
+    width:100%;
+  }
+
+  .card {
+    width: 150px;
+    height: 150px;
+  }
+
+  .top {
+    margin-bottom: 0;
+    margin-left: 5px;
+  }
+
+  .label{
+    font-size: 1rem;
+  }
+
+  .number {
+    font-size: 4rem;
+  }
+  .caseType {
+    margin-top: 10px;
+    font-size: 1.3rem;
+  }
+
+  
 }

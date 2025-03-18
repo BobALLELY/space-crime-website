@@ -33,7 +33,7 @@ const Layout = ({ children }) => {
             fontSize: `var(--font-sm)`,
           }}
         >
-          © {new Date().getFullYear()} &middot; Space Crime Company
+          {/* © {new Date().getFullYear()} &middot; Space Crime Company */}
         </footer>
       </div>
     </>

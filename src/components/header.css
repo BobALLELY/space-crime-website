@@ -7,3 +7,18 @@
 .logo {
   /* margin: 10px; */
 }
+
+.header {
+  position: fixed;
+}
+
+/* Mode colonne pour mobile */
+@media (max-width: 768px) { 
+  .logos {
+    /* display: none; */
+  }
+  .logo {
+    justify-content: center;
+    display: flex;
+  }
+}
