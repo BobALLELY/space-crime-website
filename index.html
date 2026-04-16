@@ -389,22 +389,78 @@
       white-space: nowrap;
     }
     .map-features {
-      display: flex; flex-direction: column; gap: 14px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
       margin-top: 28px;
     }
+    @media (min-width: 640px) {
+      .map-features { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
     .map-feature {
-      display: flex; align-items: flex-start; gap: 14px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 8px;
+      min-height: 132px;
+      padding: 16px 12px 14px;
+      background:
+        linear-gradient(160deg, rgba(112,38,185,.24) 0%, rgba(78,26,130,.16) 52%, rgba(6,4,14,.9) 100%);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+    }
+    .map-feature::before {
+      content: attr(data-kpi);
+      position: absolute;
+      top: 6px;
+      right: 10px;
+      font-family: var(--font-g);
+      font-size: 1.8rem;
+      line-height: 1;
+      color: rgba(232,232,240,.12);
+      letter-spacing: .02em;
+      pointer-events: none;
+    }
+    .map-feature::after {
+      content: '';
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--light) 35%, var(--accent) 65%, transparent 100%);
+      opacity: .9;
+    }
+    .map-feature:hover {
+      transform: translateY(-4px);
+      border-color: rgba(224,64,251,.65);
+      box-shadow: var(--glow-m);
     }
     .map-feature-icon {
-      flex-shrink: 0; width: 38px; height: 38px;
-      background: rgba(112,38,185,.18);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.45rem;
+      border: 1px solid rgba(224,64,251,.5);
+      background: radial-gradient(circle at 30% 25%, rgba(224,64,251,.26) 0%, rgba(112,38,185,.12) 60%, rgba(6,4,14,.65) 100%);
+      box-shadow: inset 0 0 12px rgba(224,64,251,.25), 0 0 14px rgba(112,38,185,.3);
     }
-    .map-feature-text h4 { font-family: var(--font-g); font-size: .88rem; margin-bottom: 3px; }
-    .map-feature-text p  { font-size: .82rem; color: var(--muted); line-height: 1.55; }
+    .map-feature h4 {
+      font-family: var(--font-g);
+      font-size: .98rem;
+      letter-spacing: .04em;
+      line-height: 1.15;
+      text-transform: uppercase;
+      max-width: 16ch;
+    }
 
     /* ══════════════════════════════════════════════════════════
        MODES CARDS
@@ -450,11 +506,11 @@
       content: ''; position: absolute;
       top: 0; left: 0; right: 0; height: 3px; z-index: 2;
     }
-    .mode-card.c1::before { background: linear-gradient(90deg,var(--primary),var(--light)); }
-    .mode-card.c2::before { background: linear-gradient(90deg,#16a34a,#4ade80); }
-    .mode-card.c3::before { background: linear-gradient(90deg,#1d4ed8,#60a5fa); }
-    .mode-card.c4::before { background: linear-gradient(90deg,#b91c1c,#f87171); }
-    .mode-card.c5::before { background: linear-gradient(90deg,#a16207,#fbbf24); }
+    .mode-card.c5::before { background: linear-gradient(90deg,var(--primary),var(--light)); }
+    .mode-card.c1::before { background: linear-gradient(90deg,#1c9e4f,#62e289); }
+    .mode-card.c2::before { background: linear-gradient(90deg,#2b7fd9,#6fd0ff); }
+    .mode-card.c4::before { background: linear-gradient(90deg,#fd3351,#ff4d93); }
+    .mode-card.c3::before { background: linear-gradient(90deg,#df6f18,#ffb56f); }
 
     /* Screenshot preview */
     .mode-preview {
@@ -476,19 +532,25 @@
     }
     /* Tag overlaid on preview */
     .mode-tag {
-      position: absolute; bottom: 10px; left: 14px; z-index: 1;
-      font-family: var(--font-g); font-size: .58rem;
-      letter-spacing: .12em; text-transform: uppercase; padding: 3px 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      font-family: var(--font-g); font-size: .74rem;
+      letter-spacing: .08em; text-transform: uppercase; padding: 0 12px;
+      height: 28px;
+      line-height: 1.1;
+      text-align: center;
       border-radius: 2px;
+      align-self: flex-start;
     }
-    .mode-tag.c1 { background:rgba(112,38,185,.8); color:#e9d5ff; border:1px solid rgba(155,77,220,.5); }
-    .mode-tag.c2 { background:rgba(16,122,58,.8); color:#4ade80; border:1px solid rgba(34,197,94,.4); }
-    .mode-tag.c3 { background:rgba(29,78,216,.8); color:#93c5fd; border:1px solid rgba(59,130,246,.4); }
-    .mode-tag.c4 { background:rgba(153,27,27,.8); color:#fca5a5; border:1px solid rgba(239,68,68,.4); }
-    .mode-tag.c5 { background:rgba(120,80,0,.8); color:#fde68a; border:1px solid rgba(234,179,8,.4); }
+    .mode-tag.c5 { background:rgba(112,38,185,.8); color:#e9d5ff; border:1px solid rgba(155,77,220,.5); }
+    .mode-tag.c1 { background:rgba(22,98,52,.88); color:#c9ffdc; border:1px solid rgba(98,226,137,.55); }
+    .mode-tag.c2 { background:rgba(28,72,132,.88); color:#d8f4ff; border:1px solid rgba(111,208,255,.55); }
+    .mode-tag.c4 { background:rgba(112,28,72,.88); color:#ffe2ef; border:1px solid rgba(255,77,147,.55); }
+    .mode-tag.c3 { background:rgba(110,62,19,.88); color:#fff0da; border:1px solid rgba(255,181,111,.55); }
 
     .mode-body { padding: 16px 18px 20px; flex: 1; display: flex; flex-direction: column; }
-    .mode-title { font-family: var(--font-g); font-size: .95rem; margin-bottom: 8px; }
     .mode-desc { font-size: .82rem; color: var(--muted); line-height: 1.65; flex: 1; }
     .mode-pill {
       display: inline-flex; align-items: center; gap: 5px;
@@ -496,11 +558,11 @@
       letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
     }
     .mode-pill svg { width: 12px; height: 12px; }
-    .mode-card.c1 .mode-pill { color: #c084fc; }
-    .mode-card.c2 .mode-pill { color: #4ade80; }
-    .mode-card.c3 .mode-pill { color: #60a5fa; }
-    .mode-card.c4 .mode-pill { color: #f87171; }
-    .mode-card.c5 .mode-pill { color: #fbbf24; }
+    .mode-card.c5 .mode-pill { color: #c084fc; }
+    .mode-card.c1 .mode-pill { color: #62e289; }
+    .mode-card.c2 .mode-pill { color: #6fd0ff; }
+    .mode-card.c4 .mode-pill { color: #ff4d93; }
+    .mode-card.c3 .mode-pill { color: #ffb56f; }
 
     /* ══════════════════════════════════════════════════════════
        SCREENSHOTS
@@ -611,9 +673,9 @@
     }
     .feat-row {
       display: grid;
-      grid-template-columns: 52px 1fr;
+      grid-template-columns: 80px 1fr;
       gap: 0 20px;
-      align-items: start;
+      align-items: center;
       padding: 28px 0;
       border-bottom: 1px solid var(--border);
       position: relative;
@@ -635,11 +697,12 @@
     /* index number */
     .feat-num {
       font-family: var(--font-g);
-      font-size: .75rem;
+      font-size: 3.6rem;
+      line-height: 1;
       color: var(--feat-color, var(--accent));
-      letter-spacing: .12em;
-      padding-top: 3px;
-      opacity: .7;
+      letter-spacing: .06em;
+      text-align: center;
+      opacity: .55;
       transition: opacity .2s;
     }
     .feat-row:hover .feat-num { opacity: 1; }
@@ -688,8 +751,8 @@
         border-bottom: 1px solid var(--border);
         border-right: 1px solid var(--border);
         padding: 28px 24px;
-        grid-template-columns: 36px 1fr;
-        gap: 0 14px;
+        grid-template-columns: 80px 1fr;
+        gap: 0 20px;
       }
       /* supprimer la bordure droite de la 3e colonne */
       .feat-row:nth-child(3n) { border-right: none; }
@@ -795,8 +858,8 @@
     <img class="hero-logo" src="images/logo.png" alt="Space Crime" />
     <h1><span class="grad">Enqu&ecirc;teur</span><br/>intergalactique</h1>
     <p class="hero-sub">
-      À bord de la Station Spatiale, chaque couloir cache un crime.<br/>
-      Résolvez des affaires uniques, déjouez les coupables, devenez la légende de la station.
+      Space Crime est un jeu d'enquêtes.<br/>
+      Résolvez des affaires criminelles, arrêtez les coupables et devenez la légende de la station.
     </p>
     <div class="hero-ctas">
       <a href="#download" class="btn-main">▶ Télécharger gratuitement</a>
@@ -820,12 +883,12 @@
         <span class="stat-lbl">Modes de jeu</span>
       </div>
       <div class="stat-cell">
-        <span class="stat-num">10h</span>
-        <span class="stat-lbl">De contenu</span>
+        <span class="stat-num" data-target="10">0</span>
+        <span class="stat-lbl">Wanted</span>
       </div>
       <div class="stat-cell">
-        <span class="stat-num">Énorme</span>
-        <span class="stat-lbl">Carte</span>
+        <span class="stat-num">Fou rire</span>
+        <span class="stat-lbl">Garanti</span>
       </div>
     </div>
   </div>
@@ -838,36 +901,13 @@
       <div class="map-showcase-layout">
         <div class="map-text reveal">
           <span class="section-label">L'univers</span>
-          <h2 class="section-title">Bienvenue à bord<br/>de la Station Spatiale</h2>
+          <h2 class="section-title">Bienvenue à bord de<br/><span class="grad">Space Crime</span></h2>
           <p class="section-desc">
-            Dans cette station, le crime se cache à chaque sas et chaque couloir.
-            Vols, trahisons, meurtres de sang-froid — la police intergalactique est dépassée.
-            C'est pourquoi elle a besoin de vous. Résolvez des affaires, de la plus banale à la plus dangereuse.
+            Dans cette station, le crime est devenu monnaie courante.
+            Vols, trahisons, meurtres de sang-froid, la police intergalactique est dépassée...
+            <br>C'est pourquoi elle a besoin de vous ! <br>Résolvez des affaires, de la plus banale à la plus dangereuse.
             Vos compétences en observation et en déduction sont votre seule arme.
           </p>
-          <div class="map-features">
-            <div class="map-feature">
-              <div class="map-feature-icon">🗺️</div>
-              <div class="map-feature-text">
-                <h4>Une station immersive</h4>
-                <p>Des dizaines de secteurs, chacun avec sa faune de suspects et ses secrets enfouis.</p>
-              </div>
-            </div>
-            <div class="map-feature">
-              <div class="map-feature-icon">🎲</div>
-              <div class="map-feature-text">
-                <h4>100% procédural</h4>
-                <p>Crimes, suspects et indices sont générés à chaque partie. Jamais deux enquêtes identiques.</p>
-              </div>
-            </div>
-            <div class="map-feature">
-              <div class="map-feature-icon">🧩</div>
-              <div class="map-feature-text">
-                <h4>Déduction pure</h4>
-                <p>Aucun hasard dans la résolution. Seule votre logique vous mènera à la vérité.</p>
-              </div>
-            </div>
-          </div>
         </div>
         <div class="map-visual reveal">
           <div class="map-frame">
@@ -896,9 +936,9 @@
     <div class="section-inner">
       <div class="modes-intro reveal">
         <div>
-          <span class="section-label">5 façons de jouer</span>
-          <h2 class="section-title">Un jeu,<br/><span class="grad">des infinies possibilités</span></h2>
-          <p class="section-desc">Chaque mode offre une expérience différente. Jouez 5 minutes ou 2 heures — la station s'adapte à vous.</p>
+          <span class="section-label">Plusieurs modes de jeu</span>
+          <h2 class="section-title"><span class="grad">5 modes</span> de jeu,<br/><span class="grad">100 parties</span> différentes</h2>
+          <p class="section-desc">Chaque mode offre une expérience différente.<br>Jouez 5 minutes ou 2 heures — la station s'adapte à vous.</p>
         </div>
         <img class="modes-overview-img" src="images/parties.png" alt="Aperçu des 5 modes de jeu" />
       </div>
@@ -907,10 +947,9 @@
         <div class="mode-card c1 reveal">
           <div class="mode-preview">
             <img src="images/1_case.png" alt="Écran enquête classique" loading="lazy" data-zoomable />
-            <span class="mode-tag c1">Enquête</span>
           </div>
           <div class="mode-body">
-            <h3 class="mode-title">Enquête classique</h3>
+            <span class="mode-tag c1">Enquête</span>
             <p class="mode-desc">Analysez la scène de crime, interrogez les témoins, croisez les indices. Un suspect, une vérité — à vous de la démasquer.</p>
             <span class="mode-pill">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -922,10 +961,9 @@
         <div class="mode-card c2 reveal">
           <div class="mode-preview">
             <img src="images/201_case.png" alt="Écran cherche et trouve" loading="lazy" data-zoomable />
-            <span class="mode-tag c2">Cherche &amp; Trouve</span>
           </div>
           <div class="mode-body">
-            <h3 class="mode-title">Cherche et trouve</h3>
+            <span class="mode-tag c2">Cherche &amp; Trouve</span>
             <p class="mode-desc">Contre la montre, retrouvez tous les objets dissimulés dans la station. Chaque seconde perdue rapproche les criminels de leur fuite.</p>
             <span class="mode-pill">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -937,10 +975,9 @@
         <div class="mode-card c3 reveal">
           <div class="mode-preview">
             <img src="images/3_case.png" alt="Écran mission libre" loading="lazy" data-zoomable />
-            <span class="mode-tag c3">Mission</span>
           </div>
           <div class="mode-body">
-            <h3 class="mode-title">Mission libre</h3>
+            <span class="mode-tag c3">Mission</span>
             <p class="mode-desc">Un objectif secret vous est confié. Explorez la station à votre rythme et accomplissez votre mission sans pression de temps.</p>
             <span class="mode-pill">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -952,10 +989,9 @@
         <div class="mode-card c4 reveal">
           <div class="mode-preview">
             <img src="images/9_case.png" alt="Écran wanted" loading="lazy" data-zoomable />
-            <span class="mode-tag c4">Wanted</span>
           </div>
           <div class="mode-body">
-            <h3 class="mode-title">Wanted</h3>
+            <span class="mode-tag c4">Wanted</span>
             <p class="mode-desc">Les plus dangereux criminels de la galaxie rodent dans la station. Localisez-les avant qu'ils ne disparaissent dans l'hyperespace.</p>
             <span class="mode-pill">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -964,15 +1000,14 @@
           </div>
         </div>
 
-        <div class="mode-card c5 reveal">
+        <div class="mode-card c4 reveal">
           <div class="mode-preview">
             <img src="images/1_case.png" alt="Écran chasse au trésor" loading="lazy"
                  style="filter:sepia(.4) hue-rotate(20deg) saturate(1.4)" />
-            <span class="mode-tag c5">Trésor</span>
           </div>
           <div class="mode-body">
-            <h3 class="mode-title">Chasse au trésor</h3>
-            <p class="mode-desc">Des indices cryptiques dissimulés dans toute la station vous guident vers les précieux butins. Suivez chaque piste jusqu'au bout.</p>
+            <span class="mode-tag c4">Chasse au trésor</span>
+            <p class="mode-desc">Des indices dissimulés dans toute la station vous guident vers les précieux butins. Suivez chaque piste jusqu'au bout.</p>
             <span class="mode-pill">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               Exploration
@@ -992,7 +1027,7 @@
       <div class="reveal">
         <span class="section-label">Aperçu du jeu</span>
         <h2 class="section-title">Voyez par<br/><span class="grad">vous-même</span></h2>
-        <p class="section-desc">Des mécaniques soignées, une interface immersive et une atmosphère unique à chaque lancement.</p>
+        <p class="section-desc">Une carte géante, un univers déjanté à explorer.</p>
       </div>
       <div class="screenshots-scroll" role="list" aria-label="Captures d'écran du jeu">
         <div class="shot reveal" role="listitem"><img src="images/1_case.png" alt="Interface d'enquête" loading="lazy" data-zoomable /></div>
@@ -1014,63 +1049,53 @@
       </div>
       <div class="feat-list">
 
-        <div class="feat-row reveal" style="--feat-color:#e040fb">
-          <span class="feat-num">01</span>
+        <div class="feat-row reveal" style="--feat-color:#7ded7e">
+          <span class="feat-num">30</span>
           <div class="feat-content">
             <div class="feat-header">
-              <h3 class="feat-title">Infini &amp; procédural</h3>
+              <h3 class="feat-title">Enquêtes</h3>
             </div>
-            <p class="feat-text">Crimes, suspects, alibis et indices générés aléatoirement — jamais la même enquête deux fois. Le jeu ne finit jamais.</p>
+            <p class="feat-text">La solution existe toujours, c'est votre esprit d'analyse qui fait la différence.</p>
           </div>
         </div>
 
-        <div class="feat-row reveal" style="--feat-color:#00ff88">
-          <span class="feat-num">02</span>
+        <div class="feat-row reveal" style="--feat-color:#51cafe">
+          <span class="feat-num">30</span>
           <div class="feat-content">
             <div class="feat-header">
-              <h3 class="feat-title">Zéro hasard</h3>
+              <h3 class="feat-title">Cherche et trouve</h3>
             </div>
-            <p class="feat-text">Pas de dés, pas de chance. La solution existe toujours — c'est votre esprit d'analyse qui fait la différence.</p>
+            <p class="feat-text">Retrouvez tous les objets/personnages disséminés dans la station.</p>
           </div>
         </div>
 
-        <div class="feat-row reveal" style="--feat-color:#ff9800">
-          <span class="feat-num">03</span>
+        <div class="feat-row reveal" style="--feat-color:#fcb482">
+          <span class="feat-num">20</span>
           <div class="feat-content">
             <div class="feat-header">
-              <h3 class="feat-title">Univers vivant</h3>
+              <h3 class="feat-title">Missions</h3>
             </div>
-            <p class="feat-text">Une station spatiale peuplée de factions rivales, d'aliens et de zones interdites. Chaque suspect a un passé — et un mobile.</p>
+            <p class="feat-text">Prenez votre temps et résolvez chaque mission avec soin.</p>
           </div>
         </div>
 
-        <div class="feat-row reveal" style="--feat-color:#ffd700">
-          <span class="feat-num">04</span>
+        <div class="feat-row reveal" style="--feat-color:#fd3351">
+          <span class="feat-num">10</span>
           <div class="feat-content">
             <div class="feat-header">
-              <h3 class="feat-title">Classements &amp; défis</h3>
+              <h3 class="feat-title">Wanted</h3>
             </div>
-            <p class="feat-text">Affaires chronométrées, scores mondiaux. Affrontez la communauté et grimpez dans le classement galactique.</p>
+            <p class="feat-text">Identifiez les criminels recherchés et retracez leurs activités.</p>
           </div>
         </div>
 
-        <div class="feat-row reveal" style="--feat-color:#00d4ff">
-          <span class="feat-num">05</span>
+        <div class="feat-row reveal" style="--feat-color:#fd3351">
+          <span class="feat-num">10</span>
           <div class="feat-content">
             <div class="feat-header">
-              <h3 class="feat-title">Conçu pour mobile</h3>
+              <h3 class="feat-title">Chasses au trésor</h3>
             </div>
-            <p class="feat-text">Interface tactile optimisée, sessions courtes ou marathons. Jouez partout, sans connexion requise.</p>
-          </div>
-        </div>
-
-        <div class="feat-row reveal" style="--feat-color:#b388ff">
-          <span class="feat-num">06</span>
-          <div class="feat-content">
-            <div class="feat-header">
-              <h3 class="feat-title">Gratuit pour commencer</h3>
-            </div>
-            <p class="feat-text">Le cœur du jeu est entièrement accessible. Étendez votre arsenal avec des packs d'enquêtes optionnels.</p>
+            <p class="feat-text">Retrouvez le trésor caché de chaque criminels grâce à leurs activités.</p>
           </div>
         </div>
 
@@ -1084,10 +1109,10 @@
   <section class="cta-section" id="download" aria-label="Télécharger">
     <div class="cta-inner reveal">
       <img class="cta-logo" src="images/logo.png" alt="Space Crime" />
-      <h2>Rejoignez la<br/><span class="grad">Station Spatiale</span></h2>
+      <h2><span class="grad">Participez</span><br>à l'aventure</h2>
       <p>
-        Space Crime sera bientôt disponible sur iOS et Android.<br/>
-        Téléchargez gratuitement et lancez votre première enquête dès le premier jour.
+        Space Crime sera bientôt disponible sur iOS, Android & Steam.<br/>
+        Téléchargez-le gratuitement sur mobile et lancez votre première enquête !
       </p>
       <div class="store-buttons">
         <a href="#" class="store-btn">
@@ -1105,7 +1130,7 @@
           </div>
         </a>
       </div>
-      <p class="cta-note">Gratuit · <strong>Aucun abonnement</strong> · iOS &amp; Android</p>
+      <p class="cta-note"><strong>100% déjanté</strong> · iOS, Android &amp; Steam</p>
     </div>
   </section>
 
