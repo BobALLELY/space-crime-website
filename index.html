@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Space Crime — Le jeu d'enquête intergalactique</title>
+  <meta name="description" content="Résolvez des crimes à bord de la Station Spatiale. Un jeu d'enquête unique, procédural et entièrement gratuit sur iOS et Android." />
+  <style>
+    /* ══════════════════════════════════════════════════════════
+       SPACE CRIME — Landing page · Mobile-first · Scroll design
+    ══════════════════════════════════════════════════════════ */
+
+    @font-face {
+      font-family: 'Engcomica';
+      src: url('fonts/Engcomica.otf') format('opentype');
+      font-weight: normal; font-style: normal; font-display: swap;
+    }
+
+    :root {
+      --bg:        #06040e;
+      --bg2:       #0b0719;
+      --primary:   #7026b9;
+      --light:     #9b4ddc;
+      --dark:      #4e1a82;
+      --accent:    #e040fb;
+      --text:      #e8e8f0;
+      --muted:     #9990bb;
+      --border:    rgba(112,38,185,0.45);
+      --glow-s:    0 0 10px rgba(155,77,220,0.6);
+      --glow-m:    0 0 24px rgba(155,77,220,0.5), 0 0 48px rgba(112,38,185,0.3);
+      --glow-l:    0 0 40px rgba(155,77,220,0.6), 0 0 90px rgba(112,38,185,0.4);
+      --font-ui:   'Segoe UI', system-ui, -apple-system, sans-serif;
+      --font-g:    'Engcomica', 'Segoe UI', system-ui, sans-serif;
+      --radius:    4px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── Keyframes ── */
+    @keyframes float    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+    @keyframes glitch {
+      0%,91%,100%{clip-path:none;transform:none}
+      92%{clip-path:inset(22% 0 54% 0);transform:translate(-4px,0)}
+      94%{clip-path:inset(60% 0 14% 0);transform:translate(4px,0)}
+      96%{clip-path:none;transform:none}
+    }
+    @keyframes blink    { 0%,100%{opacity:1} 50%{opacity:0} }
+    @keyframes shimmer  { from{background-position:-200% center} to{background-position:200% center} }
+    @keyframes reveal   { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes pulse-btn{ 0%,100%{box-shadow:var(--glow-m)} 50%{box-shadow:var(--glow-l)} }
+    @keyframes drift    { from{transform:translate(0,0)} to{transform:translate(50px,50px)} }
+    @keyframes run-line { from{background-position:0%} to{background-position:200%} }
+
+    /* ── Global scanlines ── */
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:900;
+      background:repeating-linear-gradient(to bottom,transparent 0,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px);
+    }
+    /* Background stars */
+    .bg-stars {
+      position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+    }
+    .bg-stars::before {
+      content:''; position:absolute; inset:-40%;
+      width:180%; height:180%;
+      background-image:
+        radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,.8) 0%,transparent 100%),
+        radial-gradient(1px 1px at 28% 44%, rgba(255,255,255,.6) 0%,transparent 100%),
+        radial-gradient(1px 1px at 43% 8%,  rgba(255,255,255,.9) 0%,transparent 100%),
+        radial-gradient(1px 1px at 57% 63%, rgba(255,255,255,.5) 0%,transparent 100%),
+        radial-gradient(1px 1px at 71% 28%, rgba(255,255,255,.8) 0%,transparent 100%),
+        radial-gradient(2px 2px at 84% 82%, rgba(200,170,255,.5) 0%,transparent 100%),
+        radial-gradient(1px 1px at 16% 72%, rgba(255,255,255,.7) 0%,transparent 100%),
+        radial-gradient(1px 1px at 91% 47%, rgba(255,255,255,.6) 0%,transparent 100%),
+        radial-gradient(1px 1px at 36% 87%, rgba(200,170,255,.5) 0%,transparent 100%),
+        radial-gradient(2px 2px at 62% 6%,  rgba(200,170,255,.4) 0%,transparent 100%),
+        radial-gradient(1px 1px at 49% 33%, rgba(255,255,255,.9) 0%,transparent 100%),
+        radial-gradient(1px 1px at 78% 67%, rgba(255,255,255,.7) 0%,transparent 100%),
+        radial-gradient(1px 1px at 7%  52%, rgba(255,255,255,.8) 0%,transparent 100%),
+        radial-gradient(1px 1px at 94% 22%, rgba(255,255,255,.8) 0%,transparent 100%),
+        radial-gradient(1px 1px at 22% 91%, rgba(255,255,255,.6) 0%,transparent 100%),
+        radial-gradient(1px 1px at 66% 56%, rgba(255,255,255,.7) 0%,transparent 100%);
+      background-size: 650px 650px;
+      animation: drift 100s linear infinite;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       NAVIGATION
+    ══════════════════════════════════════════════════════════ */
+    .site-nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(6,4,14,0.88);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1100px; margin: 0 auto; padding: 14px 20px;
+    }
+    .nav-brand {
+      font-family: var(--font-g); font-size: 1.1rem; letter-spacing: 0.08em;
+      color: #fff; text-decoration: none;
+      -webkit-text-stroke: 1px rgba(0,0,0,.6); paint-order: stroke fill;
+    }
+    .nav-toggle {
+      display: flex; flex-direction: column; justify-content: space-between;
+      width: 26px; height: 18px; background: none; border: none; cursor: pointer; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-toggle span {
+      display: block; height: 2px; background: var(--light); border-radius: 2px;
+      transition: transform 0.25s, opacity 0.25s;
+    }
+    .nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+    .nav-drawer {
+      display: none; flex-direction: column;
+      border-top: 1px solid var(--border);
+      background: rgba(6,4,14,.97);
+    }
+    .nav-drawer.open { display: flex; }
+    .nav-drawer a {
+      padding: 13px 24px; color: var(--muted); text-decoration: none;
+      font-size: .88rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+      border-bottom: 1px solid rgba(112,38,185,.1); transition: color .2s, background .2s;
+    }
+    .nav-drawer a:hover { color: var(--text); background: rgba(112,38,185,.07); }
+    .nav-links-desktop { display: none; }
+
+    @media (min-width: 768px) {
+      .nav-inner { padding: 14px 32px; }
+      .nav-toggle { display: none; }
+      .nav-drawer { display: none !important; }
+      .nav-links-desktop {
+        display: flex; gap: 28px; list-style: none;
+      }
+      .nav-links-desktop a {
+        color: var(--muted); text-decoration: none; font-size: .82rem;
+        font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+        transition: color .2s;
+      }
+      .nav-links-desktop a:hover { color: var(--text); }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       HERO
+    ══════════════════════════════════════════════════════════ */
+    .hero {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+      padding: 64px 20px 72px;
+      background: radial-gradient(ellipse at 50% 0%,
+        rgba(112,38,185,.28) 0%, rgba(224,64,251,.06) 45%, transparent 70%);
+      overflow: hidden;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .68rem; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--light);
+      border: 1px solid var(--border); background: rgba(112,38,185,.12);
+      padding: 5px 14px 5px 10px; border-radius: 2px;
+      margin-bottom: 28px;
+    }
+    .hero-badge::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); box-shadow: 0 0 7px var(--accent);
+      animation: blink 1.3s step-end infinite;
+    }
+    .hero-logo {
+      max-width: 260px; width: 68%;
+      margin-bottom: 24px;
+      animation: float 9s ease-in-out infinite;
+      filter: drop-shadow(0 0 28px rgba(112,38,185,.7));
+    }
+    @media (min-width: 640px) { .hero-logo { max-width: 340px; } }
+    .hero h1 {
+      font-family: var(--font-g);
+      font-size: clamp(2rem, 8vw, 4.4rem);
+      letter-spacing: .03em; line-height: 1.25;
+      margin-bottom: 14px;
+      animation: glitch 8s steps(1) infinite;
+    }
+    .hero h1 .grad {
+      background: linear-gradient(135deg, var(--light) 0%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: inline-block;
+      padding-top: 0.1em;
+    }
+    .hero-sub {
+      font-size: clamp(.95rem, 2.5vw, 1.15rem);
+      color: var(--muted); max-width: 560px;
+      line-height: 1.8; margin-bottom: 40px;
+    }
+    .hero-ctas {
+      display: flex; flex-direction: column; gap: 12px;
+      width: 100%; max-width: 300px;
+    }
+    @media (min-width: 440px) {
+      .hero-ctas { flex-direction: row; max-width: none; justify-content: center; }
+    }
+    .btn-main {
+      display: inline-block; text-decoration: none;
+      font-family: var(--font-g); font-size: .9rem; letter-spacing: .1em;
+      font-weight: 700; padding: 15px 32px; color: #fff;
+      background: linear-gradient(135deg, var(--primary), var(--dark));
+      border: 1px solid var(--light);
+      border-radius: var(--radius);
+      box-shadow: var(--glow-m);
+      animation: pulse-btn 2.5s ease-in-out infinite;
+      transition: filter .2s, transform .1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-main:hover { filter: brightness(1.18); transform: translateY(-2px); }
+    .btn-outline {
+      display: inline-block; text-decoration: none;
+      font-size: .9rem; font-weight: 600; padding: 14px 28px;
+      color: var(--muted); border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: color .2s, border-color .2s, box-shadow .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-outline:hover { color: var(--text); border-color: var(--light); box-shadow: var(--glow-s); }
+
+    /* Scroll arrow */
+    .scroll-down {
+      margin-top: 52px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: var(--muted); font-size: .64rem; font-weight: 700;
+      letter-spacing: .16em; text-transform: uppercase;
+      animation: float 2.5s ease-in-out infinite;
+    }
+    .scroll-down svg { width: 20px; height: 20px; color: var(--muted); }
+
+    /* ══════════════════════════════════════════════════════════
+       STATS BAND
+    ══════════════════════════════════════════════════════════ */
+    .stats-band {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: rgba(112,38,185,.06);
+    }
+    .stats-inner {
+      max-width: 900px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      divide-x: var(--border);
+    }
+    @media (min-width: 640px) { .stats-inner { grid-template-columns: repeat(4, 1fr); } }
+    .stat-cell {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 28px 12px;
+      border-right: 1px solid var(--border);
+    }
+    .stat-cell:last-child { border-right: none; }
+    @media (max-width: 639px) {
+      .stat-cell:nth-child(2) { border-right: none; }
+      .stat-cell:nth-child(1),
+      .stat-cell:nth-child(2) { border-bottom: 1px solid var(--border); }
+    }
+    .stat-num {
+      font-family: var(--font-g);
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      color: #fff; line-height: 1;
+      background: linear-gradient(135deg, var(--light), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      width: 100%;
+      text-align: center;
+    }
+    .stat-lbl {
+      font-size: .68rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .1em;
+      margin-top: 5px; text-align: center;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       DIVIDER
+    ══════════════════════════════════════════════════════════ */
+    .divider {
+      height: 1px; position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      background: linear-gradient(90deg, transparent, var(--primary), var(--accent), var(--primary), transparent);
+      background-size: 200% 100%;
+      animation: run-line 4.5s linear infinite;
+      box-shadow: 0 0 12px rgba(112,38,185,.4);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       SECTIONS — shared layout
+    ══════════════════════════════════════════════════════════ */
+    .section {
+      position: relative; z-index: 1;
+      padding: 72px 20px;
+    }
+    @media (min-width: 768px) { .section { padding: 96px 32px; } }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      display: inline-block;
+      font-size: .64rem; font-weight: 800; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-label::before { content: '// '; opacity: .5; }
+    .section-title {
+      font-family: var(--font-g);
+      font-size: clamp(1.6rem, 4.5vw, 2.6rem);
+      letter-spacing: .03em; line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .section-title .grad {
+      background: linear-gradient(135deg, var(--light), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .section-desc {
+      color: var(--muted); font-size: clamp(.9rem, 2vw, 1rem);
+      line-height: 1.8; max-width: 540px;
+    }
+
+    /* Reveal animation */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ══════════════════════════════════════════════════════════
+       MAP SHOWCASE
+    ══════════════════════════════════════════════════════════ */
+    .map-showcase {
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+    }
+    .map-showcase-layout {
+      display: flex; flex-direction: column; gap: 40px;
+      align-items: center;
+    }
+    @media (min-width: 900px) {
+      .map-showcase-layout { flex-direction: row; gap: 56px; align-items: center; }
+      .map-showcase-layout .map-text { flex: 1; }
+      .map-showcase-layout .map-visual { flex: 1; }
+    }
+    .map-text .section-desc { margin-bottom: 0; }
+    .map-visual {
+      position: relative; width: 100%; max-width: 420px; align-self: center;
+    }
+    .map-sub-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .map-sub-row .map-frame img { max-height: 160px; object-fit: cover; object-position: center; }
+    .map-frame {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: var(--glow-l);
+      position: relative;
+    }
+    .map-frame::before, .map-frame::after {
+      content: ''; position: absolute;
+      width: 20px; height: 20px;
+      border-color: var(--accent); border-style: solid;
+      z-index: 2; box-shadow: 0 0 8px var(--accent);
+    }
+    .map-frame::before { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
+    .map-frame::after  { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
+    .map-frame img {
+      display: block; width: 100%; height: auto;
+      object-fit: cover;
+    }
+    .map-tag {
+      position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+      background: rgba(6,4,14,.9); border: 1px solid var(--border);
+      border-bottom: none; padding: 6px 18px;
+      font-family: var(--font-g); font-size: .62rem; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--light);
+      white-space: nowrap;
+    }
+    .map-features {
+      display: flex; flex-direction: column; gap: 14px;
+      margin-top: 28px;
+    }
+    .map-feature {
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .map-feature-icon {
+      flex-shrink: 0; width: 38px; height: 38px;
+      background: rgba(112,38,185,.18);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .map-feature-text h4 { font-family: var(--font-g); font-size: .88rem; margin-bottom: 3px; }
+    .map-feature-text p  { font-size: .82rem; color: var(--muted); line-height: 1.55; }
+
+    /* ══════════════════════════════════════════════════════════
+       MODES CARDS
+    ══════════════════════════════════════════════════════════ */
+    .modes-section { background: var(--bg); }
+    .modes-intro {
+      display: flex; flex-direction: column; gap: 24px;
+      align-items: flex-start; margin-bottom: 52px;
+    }
+    @media (min-width: 768px) {
+      .modes-intro { flex-direction: row; align-items: center; justify-content: space-between; }
+      .modes-intro .section-desc { max-width: 440px; margin: 0; }
+    }
+    .modes-overview-img {
+      width: 120px; height: 120px; object-fit: contain;
+      filter: drop-shadow(0 0 24px rgba(112,38,185,.5));
+      flex-shrink: 0;
+    }
+    @media (min-width: 768px) { .modes-overview-img { width: 100px; height: 100px; } }
+
+    .modes-grid {
+      display: grid; gap: 20px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 560px)  { .modes-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (min-width: 900px)  { .modes-grid { grid-template-columns: repeat(3,1fr); } }
+    @media (min-width: 1100px) { .modes-grid { grid-template-columns: repeat(5,1fr); } }
+
+    .mode-card {
+      position: relative;
+      background: rgba(6,4,14,.8);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: box-shadow .25s, transform .2s;
+      display: flex; flex-direction: column;
+    }
+    .mode-card:hover { box-shadow: var(--glow-m); transform: translateY(-5px); }
+    .mode-card:hover .mode-preview img { transform: scale(1.06); }
+
+    /* Colored top accent bar */
+    .mode-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px; z-index: 2;
+    }
+    .mode-card.c1::before { background: linear-gradient(90deg,var(--primary),var(--light)); }
+    .mode-card.c2::before { background: linear-gradient(90deg,#16a34a,#4ade80); }
+    .mode-card.c3::before { background: linear-gradient(90deg,#1d4ed8,#60a5fa); }
+    .mode-card.c4::before { background: linear-gradient(90deg,#b91c1c,#f87171); }
+    .mode-card.c5::before { background: linear-gradient(90deg,#a16207,#fbbf24); }
+
+    /* Screenshot preview */
+    .mode-preview {
+      position: relative; overflow: hidden;
+      height: 160px; flex-shrink: 0;
+    }
+    @media (min-width: 560px) { .mode-preview { height: 140px; } }
+    .mode-preview img {
+      display: block; width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+      transition: transform .4s ease;
+    }
+    /* Dark gradient over preview */
+    .mode-preview::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(6,4,14,0) 40%,
+        rgba(6,4,14,.9) 100%);
+    }
+    /* Tag overlaid on preview */
+    .mode-tag {
+      position: absolute; bottom: 10px; left: 14px; z-index: 1;
+      font-family: var(--font-g); font-size: .58rem;
+      letter-spacing: .12em; text-transform: uppercase; padding: 3px 9px;
+      border-radius: 2px;
+    }
+    .mode-tag.c1 { background:rgba(112,38,185,.8); color:#e9d5ff; border:1px solid rgba(155,77,220,.5); }
+    .mode-tag.c2 { background:rgba(16,122,58,.8); color:#4ade80; border:1px solid rgba(34,197,94,.4); }
+    .mode-tag.c3 { background:rgba(29,78,216,.8); color:#93c5fd; border:1px solid rgba(59,130,246,.4); }
+    .mode-tag.c4 { background:rgba(153,27,27,.8); color:#fca5a5; border:1px solid rgba(239,68,68,.4); }
+    .mode-tag.c5 { background:rgba(120,80,0,.8); color:#fde68a; border:1px solid rgba(234,179,8,.4); }
+
+    .mode-body { padding: 16px 18px 20px; flex: 1; display: flex; flex-direction: column; }
+    .mode-title { font-family: var(--font-g); font-size: .95rem; margin-bottom: 8px; }
+    .mode-desc { font-size: .82rem; color: var(--muted); line-height: 1.65; flex: 1; }
+    .mode-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      margin-top: 14px; font-size: .64rem; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+    }
+    .mode-pill svg { width: 12px; height: 12px; }
+    .mode-card.c1 .mode-pill { color: #c084fc; }
+    .mode-card.c2 .mode-pill { color: #4ade80; }
+    .mode-card.c3 .mode-pill { color: #60a5fa; }
+    .mode-card.c4 .mode-pill { color: #f87171; }
+    .mode-card.c5 .mode-pill { color: #fbbf24; }
+
+    /* ══════════════════════════════════════════════════════════
+       SCREENSHOTS
+    ══════════════════════════════════════════════════════════ */
+    .screenshots-section {
+      background: linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
+    }
+    .screenshots-scroll {
+      display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px;
+      margin-top: 40px;
+      scrollbar-color: var(--primary) rgba(112,38,185,.1);
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+    }
+    .screenshots-scroll::-webkit-scrollbar { height: 3px; }
+    .screenshots-scroll::-webkit-scrollbar-thumb {
+      background: linear-gradient(90deg,var(--primary),var(--accent));
+      border-radius: 99px;
+    }
+    .shot {
+      flex: 0 0 auto; border-radius: 8px; overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 24px rgba(0,0,0,.5);
+      transition: box-shadow .25s, transform .2s;
+      cursor: zoom-in;
+    }
+    .shot:hover { box-shadow: var(--glow-m); transform: scale(1.03) translateY(-4px); }
+
+    /* ── Zoomable map ── */
+    .map-frame { cursor: zoom-in; }
+
+    /* ── Mode card preview zoomable ── */
+    .mode-preview { cursor: zoom-in; }
+
+    /* ══════════════════════════════════════════════════════════
+       LIGHTBOX
+    ══════════════════════════════════════════════════════════ */
+    @keyframes lb-in  { from{opacity:0;transform:scale(.88)} to{opacity:1;transform:scale(1)} }
+    @keyframes lb-out { from{opacity:1;transform:scale(1)}   to{opacity:0;transform:scale(.88)} }
+
+    #lightbox {
+      display: none;
+      position: fixed; inset: 0; z-index: 9000;
+      background: rgba(4,2,10,.92);
+      backdrop-filter: blur(12px);
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    #lightbox.open  { display: flex; }
+    #lightbox.lb-closing #lb-img { animation: lb-out .22s ease forwards; }
+    #lb-img {
+      max-width: min(92vw, 1100px);
+      max-height: 88svh;
+      object-fit: contain;
+      border-radius: 6px;
+      border: 2px solid #fff;
+      box-shadow: var(--glow-l);
+      animation: lb-in .25s ease;
+      user-select: none;
+      touch-action: none;
+    }
+    #lb-close {
+      position: fixed; top: 18px; right: 20px;
+      width: 40px; height: 40px;
+      background: rgba(112,38,185,.3);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      color: var(--text); font-size: 1.2rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background .2s;
+      z-index: 9001;
+    }
+    #lb-close:hover { background: rgba(112,38,185,.6); }
+    #lb-nav-prev, #lb-nav-next {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      width: 44px; height: 44px;
+      background: rgba(112,38,185,.25);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      color: var(--text); font-size: 1.3rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background .2s;
+      z-index: 9001;
+    }
+    #lb-nav-prev { left: 14px; }
+    #lb-nav-next { right: 14px; }
+    #lb-nav-prev:hover, #lb-nav-next:hover { background: rgba(112,38,185,.55); }
+    #lb-nav-prev.hidden, #lb-nav-next.hidden { opacity: 0; pointer-events: none; }
+    #lb-counter {
+      position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+      font-family: var(--font-g); font-size: .64rem; letter-spacing: .14em;
+      color: var(--muted); text-transform: uppercase;
+      background: rgba(6,4,14,.7); padding: 5px 14px; border-radius: 99px;
+      border: 1px solid var(--border);
+      z-index: 9001;
+    }
+    .shot img { display: block; height: 280px; width: auto; object-fit: cover; }
+    @media (min-width: 640px) { .shot img { height: 320px; } }
+
+    /* ══════════════════════════════════════════════════════════
+       FEATURES
+    ══════════════════════════════════════════════════════════ */
+    .features-section { background: var(--bg2); }
+    .feat-list {
+      margin-top: 52px;
+      display: flex;
+      flex-direction: column;
+    }
+    .feat-row {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 0 20px;
+      align-items: start;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      transition: background .2s;
+      cursor: default;
+    }
+    .feat-row:first-child { border-top: 1px solid var(--border); }
+    .feat-row::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--feat-color, var(--accent));
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .feat-row:hover::before { opacity: 1; }
+    .feat-row:hover { background: rgba(255,255,255,.02); }
+    /* index number */
+    .feat-num {
+      font-family: var(--font-g);
+      font-size: .75rem;
+      color: var(--feat-color, var(--accent));
+      letter-spacing: .12em;
+      padding-top: 3px;
+      opacity: .7;
+      transition: opacity .2s;
+    }
+    .feat-row:hover .feat-num { opacity: 1; }
+    .feat-content { display: flex; flex-direction: column; gap: 6px; }
+    /* header row: title + stat capsule */
+    .feat-header {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .feat-title {
+      font-family: var(--font-g);
+      font-size: 1.25rem;
+      color: var(--feat-color, var(--accent));
+      letter-spacing: .03em;
+      margin: 0;
+    }
+    .feat-stat {
+      font-family: var(--font-g);
+      font-size: .62rem;
+      letter-spacing: .14em;
+      color: var(--feat-color, var(--accent));
+      border: 1px solid color-mix(in srgb, var(--feat-color, var(--accent)) 45%, transparent);
+      background: color-mix(in srgb, var(--feat-color, var(--accent)) 9%, transparent);
+      border-radius: 3px;
+      padding: 2px 9px;
+    }
+    .feat-text {
+      font-size: .83rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 0;
+    }
+    /* desktop: grille 3×2 */
+    @media (min-width: 960px) {
+      .feat-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+      }
+      /* retirer les bordures haut/bas de la liste */
+      .feat-row:first-child { border-top: none; }
+      /* 3 colonnes : séparateurs verticaux entre colonnes via outline */
+      .feat-row {
+        border-bottom: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+        padding: 28px 24px;
+        grid-template-columns: 36px 1fr;
+        gap: 0 14px;
+      }
+      /* supprimer la bordure droite de la 3e colonne */
+      .feat-row:nth-child(3n) { border-right: none; }
+      /* ligne du haut pour les 3 premières cartes */
+      .feat-row:nth-child(-n+3) { border-top: 1px solid var(--border); }
+      /* la barre de hover passe en haut */
+      .feat-row::before {
+        top: 0; left: 0; right: 0; bottom: auto;
+        width: auto; height: 3px;
+      }
+      .feat-text { padding-left: 0; }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       DOWNLOAD CTA
+    ══════════════════════════════════════════════════════════ */
+    .cta-section {
+      position: relative; z-index: 1;
+      background: radial-gradient(ellipse at 50% 0%,rgba(112,38,185,.3) 0%,transparent 65%),
+                  var(--bg2);
+      padding: 96px 20px;
+      text-align: center;
+    }
+    .cta-inner { max-width: 700px; margin: 0 auto; }
+    .cta-logo { max-width: 180px; width: 50%; margin: 0 auto 32px; display: block; }
+    .cta-inner h2 {
+      font-family: var(--font-g);
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      letter-spacing: .03em; line-height: 1.15;
+      margin-bottom: 18px;
+    }
+    .cta-inner h2 .grad {
+      background: linear-gradient(135deg,var(--light),var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cta-inner p {
+      color: var(--muted); font-size: clamp(.9rem,2vw,1.05rem);
+      line-height: 1.8; margin-bottom: 40px;
+    }
+    .store-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .store-btn {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 13px 22px; text-decoration: none; color: var(--text);
+      font-size: .9rem; font-weight: 600;
+      transition: background .2s, box-shadow .2s, transform .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .store-btn:hover { background: rgba(112,38,185,.22); box-shadow: var(--glow-s); transform: translateY(-2px); }
+    .store-btn img { height: 30px; width: auto; }
+    .store-btn-text { text-align: left; }
+    .store-btn-sub  { display: block; font-size: .58rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 1px; }
+    .store-btn-name { font-family: var(--font-g); font-size: .95rem; letter-spacing: .04em; }
+
+    .cta-note { margin-top: 22px; font-size: .76rem; color: var(--muted); opacity: .8; }
+    .cta-note strong { color: var(--accent); }
+
+    /* ══════════════════════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════════════════════ */
+    .footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+    }
+    .footer p { color: var(--muted); font-size: .8rem; line-height: 1.7; }
+    .footer a { color: var(--light); text-decoration: none; }
+    .footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <div class="bg-stars" aria-hidden="true"></div>
+
+  <!-- ── NAV ──────────────────────────────────────────────── -->
+  <header class="site-nav" role="banner">
+    <nav class="nav-inner" aria-label="Navigation principale">
+      <a class="nav-brand" href="#">Space Crime</a>
+      <button class="nav-toggle" id="navToggle" aria-controls="navDrawer" aria-expanded="false" aria-label="Ouvrir le menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links-desktop" role="list">
+        <li><a href="#universe">L'univers</a></li>
+        <li><a href="#modes">Modes</a></li>
+        <li><a href="#galery">Gallerie</a></li>
+        <li><a href="#download">Télécharger</a></li>
+      </ul>
+    </nav>
+    <div class="nav-drawer" id="navDrawer" role="navigation" aria-label="Menu">
+      <a href="#universe"    onclick="closeNav()">L'univers</a>
+      <a href="#modes"       onclick="closeNav()">Modes de jeu</a>
+      <a href="#galery" onclick="closeNav()">Gallerie</a>
+      <a href="#download"    onclick="closeNav()">Télécharger</a>
+    </div>
+  </header>
+
+  <!-- ── HERO ─────────────────────────────────────────────── -->
+  <section class="hero" aria-label="Présentation">
+    <div class="hero-badge">Bientôt disponible</div>
+    <img class="hero-logo" src="images/logo.png" alt="Space Crime" />
+    <h1><span class="grad">Enqu&ecirc;teur</span><br/>intergalactique</h1>
+    <p class="hero-sub">
+      À bord de la Station Spatiale, chaque couloir cache un crime.<br/>
+      Résolvez des affaires uniques, déjouez les coupables, devenez la légende de la station.
+    </p>
+    <div class="hero-ctas">
+      <a href="#download" class="btn-main">▶ Télécharger gratuitement</a>
+      <a href="#universe" class="btn-outline">Découvrir le jeu</a>
+    </div>
+    <div class="scroll-down" aria-hidden="true">
+      <span>Défiler</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </div>
+  </section>
+
+  <!-- ── STATS ─────────────────────────────────────────────── -->
+  <div class="stats-band" role="region" aria-label="Chiffres clés">
+    <div class="stats-inner">
+      <div class="stat-cell">
+        <span class="stat-num" data-target="100">0 </span>
+        <span class="stat-lbl">Parties uniques</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num" data-target="5">0</span>
+        <span class="stat-lbl">Modes de jeu</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num">10h</span>
+        <span class="stat-lbl">De contenu</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num">Énorme</span>
+        <span class="stat-lbl">Carte</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── UNIVERS ───────────────────────────────────────────── -->
+  <section class="section map-showcase" id="universe" aria-label="L'univers du jeu">
+    <div class="section-inner">
+      <div class="map-showcase-layout">
+        <div class="map-text reveal">
+          <span class="section-label">L'univers</span>
+          <h2 class="section-title">Bienvenue à bord<br/>de la Station Spatiale</h2>
+          <p class="section-desc">
+            Dans cette station, le crime se cache à chaque sas et chaque couloir.
+            Vols, trahisons, meurtres de sang-froid — la police intergalactique est dépassée.
+            C'est pourquoi elle a besoin de vous. Résolvez des affaires, de la plus banale à la plus dangereuse.
+            Vos compétences en observation et en déduction sont votre seule arme.
+          </p>
+          <div class="map-features">
+            <div class="map-feature">
+              <div class="map-feature-icon">🗺️</div>
+              <div class="map-feature-text">
+                <h4>Une station immersive</h4>
+                <p>Des dizaines de secteurs, chacun avec sa faune de suspects et ses secrets enfouis.</p>
+              </div>
+            </div>
+            <div class="map-feature">
+              <div class="map-feature-icon">🎲</div>
+              <div class="map-feature-text">
+                <h4>100% procédural</h4>
+                <p>Crimes, suspects et indices sont générés à chaque partie. Jamais deux enquêtes identiques.</p>
+              </div>
+            </div>
+            <div class="map-feature">
+              <div class="map-feature-icon">🧩</div>
+              <div class="map-feature-text">
+                <h4>Déduction pure</h4>
+                <p>Aucun hasard dans la résolution. Seule votre logique vous mènera à la vérité.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="map-visual reveal">
+          <div class="map-frame">
+            <img src="images/1-1.png" alt="Carte de la Station Spatiale" loading="lazy" data-zoomable />
+            <div class="map-tag">Secteur 1/9</div>
+          </div>
+          <div class="map-sub-row">
+            <div class="map-frame">
+              <img src="images/1-1.png" alt="Carte de la Station Spatiale - Secteur 2" loading="lazy" data-zoomable />
+              <div class="map-tag">Secteur 2/9</div>
+            </div>
+            <div class="map-frame">
+              <img src="images/1-1.png" alt="Carte de la Station Spatiale - Secteur 3" loading="lazy" data-zoomable />
+              <div class="map-tag">Secteur 3/9</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── MODES ─────────────────────────────────────────────── -->
+  <section class="section modes-section" id="modes" aria-label="Modes de jeu">
+    <div class="section-inner">
+      <div class="modes-intro reveal">
+        <div>
+          <span class="section-label">5 façons de jouer</span>
+          <h2 class="section-title">Un jeu,<br/><span class="grad">des infinies possibilités</span></h2>
+          <p class="section-desc">Chaque mode offre une expérience différente. Jouez 5 minutes ou 2 heures — la station s'adapte à vous.</p>
+        </div>
+        <img class="modes-overview-img" src="images/parties.png" alt="Aperçu des 5 modes de jeu" />
+      </div>
+      <div class="modes-grid">
+
+        <div class="mode-card c1 reveal">
+          <div class="mode-preview">
+            <img src="images/1_case.png" alt="Écran enquête classique" loading="lazy" data-zoomable />
+            <span class="mode-tag c1">Enquête</span>
+          </div>
+          <div class="mode-body">
+            <h3 class="mode-title">Enquête classique</h3>
+            <p class="mode-desc">Analysez la scène de crime, interrogez les témoins, croisez les indices. Un suspect, une vérité — à vous de la démasquer.</p>
+            <span class="mode-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Durée libre
+            </span>
+          </div>
+        </div>
+
+        <div class="mode-card c2 reveal">
+          <div class="mode-preview">
+            <img src="images/201_case.png" alt="Écran cherche et trouve" loading="lazy" data-zoomable />
+            <span class="mode-tag c2">Cherche &amp; Trouve</span>
+          </div>
+          <div class="mode-body">
+            <h3 class="mode-title">Cherche et trouve</h3>
+            <p class="mode-desc">Contre la montre, retrouvez tous les objets dissimulés dans la station. Chaque seconde perdue rapproche les criminels de leur fuite.</p>
+            <span class="mode-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Contre la montre
+            </span>
+          </div>
+        </div>
+
+        <div class="mode-card c3 reveal">
+          <div class="mode-preview">
+            <img src="images/3_case.png" alt="Écran mission libre" loading="lazy" data-zoomable />
+            <span class="mode-tag c3">Mission</span>
+          </div>
+          <div class="mode-body">
+            <h3 class="mode-title">Mission libre</h3>
+            <p class="mode-desc">Un objectif secret vous est confié. Explorez la station à votre rythme et accomplissez votre mission sans pression de temps.</p>
+            <span class="mode-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Sans limite de temps
+            </span>
+          </div>
+        </div>
+
+        <div class="mode-card c4 reveal">
+          <div class="mode-preview">
+            <img src="images/9_case.png" alt="Écran wanted" loading="lazy" data-zoomable />
+            <span class="mode-tag c4">Wanted</span>
+          </div>
+          <div class="mode-body">
+            <h3 class="mode-title">Wanted</h3>
+            <p class="mode-desc">Les plus dangereux criminels de la galaxie rodent dans la station. Localisez-les avant qu'ils ne disparaissent dans l'hyperespace.</p>
+            <span class="mode-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Haute intensité
+            </span>
+          </div>
+        </div>
+
+        <div class="mode-card c5 reveal">
+          <div class="mode-preview">
+            <img src="images/1_case.png" alt="Écran chasse au trésor" loading="lazy"
+                 style="filter:sepia(.4) hue-rotate(20deg) saturate(1.4)" />
+            <span class="mode-tag c5">Trésor</span>
+          </div>
+          <div class="mode-body">
+            <h3 class="mode-title">Chasse au trésor</h3>
+            <p class="mode-desc">Des indices cryptiques dissimulés dans toute la station vous guident vers les précieux butins. Suivez chaque piste jusqu'au bout.</p>
+            <span class="mode-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Exploration
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── SCREENSHOTS ───────────────────────────────────────── -->
+  <section class="section screenshots-section" id="galery" aria-label="Gallerie">
+    <div class="section-inner">
+      <div class="reveal">
+        <span class="section-label">Aperçu du jeu</span>
+        <h2 class="section-title">Voyez par<br/><span class="grad">vous-même</span></h2>
+        <p class="section-desc">Des mécaniques soignées, une interface immersive et une atmosphère unique à chaque lancement.</p>
+      </div>
+      <div class="screenshots-scroll" role="list" aria-label="Captures d'écran du jeu">
+        <div class="shot reveal" role="listitem"><img src="images/1_case.png" alt="Interface d'enquête" loading="lazy" data-zoomable /></div>
+        <div class="shot reveal" role="listitem"><img src="images/3_case.png" alt="Mode mission" loading="lazy" data-zoomable /></div>
+        <div class="shot reveal" role="listitem"><img src="images/9_case.png" alt="Mode wanted" loading="lazy" data-zoomable /></div>
+        <div class="shot reveal" role="listitem"><img src="images/201_case.png" alt="Mode cherche et trouve" loading="lazy" data-zoomable /></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── FEATURES ─────────────────────────────────────────── -->
+  <section class="section features-section" aria-label="Points forts">
+    <div class="section-inner">
+      <div class="reveal">
+        <span class="section-label">Pourquoi Space Crime ?</span>
+        <h2 class="section-title">Fait pour<br/><span class="grad">les vrais enquêteurs</span></h2>
+      </div>
+      <div class="feat-list">
+
+        <div class="feat-row reveal" style="--feat-color:#e040fb">
+          <span class="feat-num">01</span>
+          <div class="feat-content">
+            <div class="feat-header">
+              <h3 class="feat-title">Infini &amp; procédural</h3>
+            </div>
+            <p class="feat-text">Crimes, suspects, alibis et indices générés aléatoirement — jamais la même enquête deux fois. Le jeu ne finit jamais.</p>
+          </div>
+        </div>
+
+        <div class="feat-row reveal" style="--feat-color:#00ff88">
+          <span class="feat-num">02</span>
+          <div class="feat-content">
+            <div class="feat-header">
+              <h3 class="feat-title">Zéro hasard</h3>
+            </div>
+            <p class="feat-text">Pas de dés, pas de chance. La solution existe toujours — c'est votre esprit d'analyse qui fait la différence.</p>
+          </div>
+        </div>
+
+        <div class="feat-row reveal" style="--feat-color:#ff9800">
+          <span class="feat-num">03</span>
+          <div class="feat-content">
+            <div class="feat-header">
+              <h3 class="feat-title">Univers vivant</h3>
+            </div>
+            <p class="feat-text">Une station spatiale peuplée de factions rivales, d'aliens et de zones interdites. Chaque suspect a un passé — et un mobile.</p>
+          </div>
+        </div>
+
+        <div class="feat-row reveal" style="--feat-color:#ffd700">
+          <span class="feat-num">04</span>
+          <div class="feat-content">
+            <div class="feat-header">
+              <h3 class="feat-title">Classements &amp; défis</h3>
+            </div>
+            <p class="feat-text">Affaires chronométrées, scores mondiaux. Affrontez la communauté et grimpez dans le classement galactique.</p>
+          </div>
+        </div>
+
+        <div class="feat-row reveal" style="--feat-color:#00d4ff">
+          <span class="feat-num">05</span>
+          <div class="feat-content">
+            <div class="feat-header">
+              <h3 class="feat-title">Conçu pour mobile</h3>
+            </div>
+            <p class="feat-text">Interface tactile optimisée, sessions courtes ou marathons. Jouez partout, sans connexion requise.</p>
+          </div>
+        </div>
+
+        <div class="feat-row reveal" style="--feat-color:#b388ff">
+          <span class="feat-num">06</span>
+          <div class="feat-content">
+            <div class="feat-header">
+              <h3 class="feat-title">Gratuit pour commencer</h3>
+            </div>
+            <p class="feat-text">Le cœur du jeu est entièrement accessible. Étendez votre arsenal avec des packs d'enquêtes optionnels.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── DOWNLOAD CTA ──────────────────────────────────────── -->
+  <section class="cta-section" id="download" aria-label="Télécharger">
+    <div class="cta-inner reveal">
+      <img class="cta-logo" src="images/logo.png" alt="Space Crime" />
+      <h2>Rejoignez la<br/><span class="grad">Station Spatiale</span></h2>
+      <p>
+        Space Crime sera bientôt disponible sur iOS et Android.<br/>
+        Téléchargez gratuitement et lancez votre première enquête dès le premier jour.
+      </p>
+      <div class="store-buttons">
+        <a href="#" class="store-btn">
+          <img src="images/ios.png" alt="" aria-hidden="true" />
+          <div class="store-btn-text">
+            <span class="store-btn-sub">Bientôt sur</span>
+            <span class="store-btn-name">App Store</span>
+          </div>
+        </a>
+        <a href="#" class="store-btn">
+          <img src="images/android.png" alt="" aria-hidden="true" />
+          <div class="store-btn-text">
+            <span class="store-btn-sub">Bientôt sur</span>
+            <span class="store-btn-name">Google Play</span>
+          </div>
+        </a>
+      </div>
+      <p class="cta-note">Gratuit · <strong>Aucun abonnement</strong> · iOS &amp; Android</p>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────── -->
+  <footer class="footer" role="contentinfo">
+    <p>
+      &copy; 2026 <strong>Space Crime</strong> — Tous droits réservés.<br/>
+      Fait avec passion par <a href="https://github.com/BobALLELY" target="_blank" rel="noopener noreferrer">BobALLELY</a>.
+    </p>
+  </footer>
+
+  <!-- ── LIGHTBOX ──────────────────────────────────────────── -->
+  <div id="lightbox" role="dialog" aria-modal="true" aria-label="Image en plein écran">
+    <button id="lb-close" aria-label="Fermer">✕</button>
+    <button id="lb-nav-prev" aria-label="Image précédente">‹</button>
+    <img id="lb-img" src="" alt="" />
+    <button id="lb-nav-next" aria-label="Image suivante">›</button>
+    <div id="lb-counter"></div>
+  </div>
+
+  <script>
+    /* ── Hamburger ─────────────────────────── */
+    const navToggle = document.getElementById('navToggle');
+    const navDrawer = document.getElementById('navDrawer');
+    navToggle.addEventListener('click', () => {
+      const open = navDrawer.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', String(open));
+    });
+    function closeNav() {
+      navDrawer.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    /* ── Scroll reveal ─────────────────────── */
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          revealIO.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => revealIO.observe(el));
+
+    /* ── Counter animation ─────────────────── */
+    const counterEls = document.querySelectorAll('[data-target]');
+    const counterIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const el = e.target;
+          const target = +el.dataset.target;
+          let v = 0;
+          const inc = target / 70;
+          const timer = setInterval(() => {
+            v = Math.min(v + inc, target);
+            el.textContent = Math.floor(v);
+            if (v >= target) clearInterval(timer);
+          }, 14);
+          counterIO.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+    counterEls.forEach(el => counterIO.observe(el));
+
+    /* ── Lightbox ──────────────────────────── */
+    const lb        = document.getElementById('lightbox');
+    const lbImg     = document.getElementById('lb-img');
+    const lbClose   = document.getElementById('lb-close');
+    const lbPrev    = document.getElementById('lb-nav-prev');
+    const lbNext    = document.getElementById('lb-nav-next');
+    const lbCounter = document.getElementById('lb-counter');
+
+    let lbSrcs = [];
+    let lbIdx  = 0;
+
+    function buildSrcList(clickedImg) {
+      // Scope to the closest scrollable gallery or section
+      const container = clickedImg.closest('.screenshots-scroll, .modes-grid, .map-visual, section') || document;
+      return Array.from(container.querySelectorAll('[data-zoomable]')).map(img => ({
+        src: img.src,
+        alt: img.alt
+      }));
+    }
+
+    function lbShow(idx, srcs) {
+      if (srcs) lbSrcs = srcs;
+      lbIdx = Math.max(0, Math.min(idx, lbSrcs.length - 1));
+      lbImg.src = lbSrcs[lbIdx].src;
+      lbImg.alt = lbSrcs[lbIdx].alt;
+      lbCounter.textContent = (lbIdx + 1) + ' / ' + lbSrcs.length;
+      lbPrev.classList.toggle('hidden', lbIdx === 0);
+      lbNext.classList.toggle('hidden', lbIdx === lbSrcs.length - 1);
+      lb.classList.remove('lb-closing');
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function lbHide() {
+      lb.classList.add('lb-closing');
+      setTimeout(() => {
+        lb.classList.remove('open', 'lb-closing');
+        lbImg.src = '';
+        document.body.style.overflow = '';
+      }, 220);
+    }
+
+    document.addEventListener('click', e => {
+      const img = e.target.closest('[data-zoomable]');
+      if (!img) return;
+      const srcs = buildSrcList(img);
+      const idx = srcs.findIndex(s => s.src === img.src);
+      lbShow(idx >= 0 ? idx : 0, srcs);
+    });
+
+    lbClose.addEventListener('click', lbHide);
+    lb.addEventListener('click', e => { if (e.target === lb) lbHide(); });
+    lbPrev.addEventListener('click', e => { e.stopPropagation(); lbShow(lbIdx - 1, null); });
+    lbNext.addEventListener('click', e => { e.stopPropagation(); lbShow(lbIdx + 1, null); });
+
+    document.addEventListener('keydown', e => {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'Escape')      lbHide();
+      if (e.key === 'ArrowRight')  lbShow(lbIdx + 1, null);
+      if (e.key === 'ArrowLeft')   lbShow(lbIdx - 1, null);
+    });
+
+    /* Swipe on mobile */
+    let lbTouchX = null;
+    lbImg.addEventListener('touchstart', e => { lbTouchX = e.touches[0].clientX; }, { passive: true });
+    lbImg.addEventListener('touchend', e => {
+      if (lbTouchX === null) return;
+      const dx = e.changedTouches[0].clientX - lbTouchX;
+      if (Math.abs(dx) > 50) dx < 0 ? lbShow(lbIdx + 1, null) : lbShow(lbIdx - 1, null);
+      lbTouchX = null;
+    });
+  </script>
+</body>
+</html>
